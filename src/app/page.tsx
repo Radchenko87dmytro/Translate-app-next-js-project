@@ -1,9 +1,13 @@
 // import Image from "next/image";
 
+//import VoiceRecorder from "@/components/VoiceRecorder";
+
 export default function Home() {
   return (
-    <div className="bg-slate-400 grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-3 p-8 pb-4 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main>Word Translator</main>
+    <div>
+      {/* <VoiceRecorder></VoiceRecorder> */}
+      {/* className="bg-slate-400 grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-3 p-8 pb-4 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]" */}
+      {/* <main>Word Translator</main> */}
 
       {/* <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <Image

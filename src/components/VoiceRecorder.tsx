@@ -1,90 +1,149 @@
-"use client";
-
 import { ReactMic } from "react-mic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { create, StoreApi, UseBoundStore } from "zustand";
+import * as voice from "@/utils/voice";
 
-interface vioseStore {
-  voices: Blob[];
+export interface VoiceStore {
+  voices: Voice[];
   addVoice: (newVoice: Blob) => void;
+  toggleAcceptance: (id: number) => void;
 }
-const useStore: UseBoundStore<StoreApi<vioseStore>> = create<vioseStore>(
+
+export interface Voice {
+  id: number;
+  blob: Blob;
+  createdAt: Date;
+  isAccepted: boolean;
+}
+
+const useStore: UseBoundStore<StoreApi<VoiceStore>> = create<VoiceStore>(
   (set) => ({
     voices: [],
     addVoice: (newVoice: Blob) =>
-      set((state) => ({ voices: [...state.voices, newVoice] })),
+      set((state) => ({
+        voices: [
+          ...state.voices,
+          voice.init(state.voices.length + 1, newVoice),
+        ],
+      })),
+    toggleAcceptance: (id: number) =>
+      set((state) => ({
+        voices: state.voices.map((v) =>
+          v.id === id ? { ...v, isAccepted: !v.isAccepted } : v
+        ),
+      })),
   })
 );
 
 function VoiceCounter() {
   const voices = useStore((state) => state.voices);
+  const toggleAcceptance = useStore((state) => state.toggleAcceptance);
+
   return (
-    <h1>
-      {voices.length} voicesCount
-      <div className="flex-col justify-center items-center">
-        {voices.map((voice, index) => (
-          <div key={index} className="mt-4 block justify-center items-center">
-            <h3 className="text-md font-semibold">Playback: {index + 1}</h3>
-            <audio
-              className="block"
-              controls
-              src={URL.createObjectURL(voice)}
-            />
+    <div>
+      <h1 className="text-center text-lg font-semibold mb-4">
+        {voices.length} Voice{voices.length !== 1 ? "s" : ""} Recorded
+      </h1>
+
+      <div className="flex flex-col gap-4">
+        {voices.map((v) => (
+          <div
+            key={v.id}
+            className="flex flex-col md:flex-row items-center bg-white shadow p-4 rounded-lg"
+          >
+            <div className="flex-1 w-full">
+              <h3 className="text-md font-semibold mb-2">Playback #{v.id}</h3>
+              <audio
+                controls
+                src={URL.createObjectURL(v.blob)}
+                className="w-full"
+              />
+            </div>
+            <div className="mt-4 md:mt-0 md:ml-4 w-full md:w-auto text-center">
+              <button
+                className={`w-full md:w-auto px-4 py-2 rounded ${
+                  v.isAccepted ? "bg-green-500" : "bg-red-500"
+                } text-white`}
+                onClick={() => toggleAcceptance(v.id)}
+              >
+                {v.isAccepted ? "Accepted" : "Not Accepted"}
+              </button>
+            </div>
           </div>
         ))}
       </div>
-    </h1>
+    </div>
   );
 }
 
 const VoiceRecorder = () => {
   const { addVoice } = useStore();
   const [recording, setRecording] = useState<boolean>(false);
-  // const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [quote, setQuote] = useState("");
+
+  // Fetch random quote
+  const fetchQuote = async () => {
+    const res = await fetch("https://api.quotable.io/random");
+    const data = await res.json();
+    console.log(res);
+    console.log(data);
+    setQuote(data.content);
+    alert(data.content);
+  };
+
+  console.log(quote);
+
+  useEffect(() => {
+    fetchQuote();
+  }, []);
 
   const startRecording = () => setRecording(true);
   const stopRecording = () => setRecording(false);
 
   const onStop = (recordedBlob: { blob: Blob }) => {
     console.log("Recorded Blob:", recordedBlob);
-    // setAudioBlob(recordedBlob.blob);
     addVoice(recordedBlob.blob);
   };
 
   return (
-    <div className="flex-col justify-center items-center p-4 border rounded-lg shadow-lg w-full text-center">
-      <h2 className="text-lg font-bold mb-2">Voice Recorder</h2>
-      <VoiceCounter />
-      <div className="flex justify-center items-center w-full ">
-        <ReactMic
-          record={recording}
-          onStop={onStop}
-          mimeType="audio/wav"
-          strokeColor="#FF0000"
-          backgroundColor="#E0E0E0"
-        />
-      </div>
+    <div className="w-full max-w-xl mx-auto mt-20 p-4 bg-slate-100 border rounded-lg shadow-lg text-center">
+      <h2 className="text-xl font-bold mb-4">Voice Recorder</h2>
 
-      <div className="mt-4">
-        <button
-          className="px-4 py-2 bg-green-500 text-white rounded mr-2"
-          onClick={startRecording}
-        >
-          Start Recording
-        </button>
-        <button
-          className="px-4 py-2 bg-red-500 text-white rounded"
-          onClick={stopRecording}
-        >
-          Stop Recording
-        </button>
-      </div>
-      {/* {audioBlob && (
-        <div className="mt-4">
-          <h3 className="text-md font-semibold">Playback:</h3>
-          <audio controls src={URL.createObjectURL(audioBlob)} />
+      <VoiceCounter />
+
+      <div className="mt-6">
+        <div className="p-3 rounded-lg bg-gray-200">
+          <ReactMic
+            className="w-full"
+            record={recording}
+            onStop={onStop}
+            mimeType="audio/wav"
+            strokeColor="#FF0000"
+            backgroundColor="#E0E0E0"
+          />
         </div>
-      )} */}
+
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
+          <button
+            className="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
+            // onClick={}
+          >
+            Take a quote
+          </button>
+          <button
+            className="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
+            onClick={startRecording}
+          >
+            Start Recording
+          </button>
+          <button
+            className="w-full sm:w-auto px-6 py-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            onClick={stopRecording}
+          >
+            Stop Recording
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

@@ -4,10 +4,10 @@ import React from "react";
 const Heder = () => {
   return (
     <div>
-      <nav className="container  flex justify-around items-center">
+      <nav className="container  flex justify-center items-center hover:text-gray-400">
         {/* Logo */}
-        <Link href="/" className="text-xl font-bold">
-          MyWebsite
+        <Link href="/" className="text-xl font-bold mr-10">
+          Quote with recording
         </Link>
 
         {/* Navigation Links */}
