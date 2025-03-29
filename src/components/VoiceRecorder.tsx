@@ -178,6 +178,8 @@ const ReactMic = dynamic(
 
 export interface VoiceStore {
   voices: Voice[];
+  quotes: Quote[];
+  currentQuoteId: number;
   addVoice: (newVoice: Blob) => void;
   toggleAcceptance: (id: number) => void;
 }
@@ -188,10 +190,27 @@ export interface Voice {
   createdAt: Date;
   isAccepted: boolean;
 }
+export interface Quote {
+  id: number;
+  name: string;
+  url: string;
+  createdAt: Date;
+}
 
 const useStore: UseBoundStore<StoreApi<VoiceStore>> = create<VoiceStore>(
   (set) => ({
     voices: [],
+    quotes: [
+      // fictional quote (fake/init)
+      {
+        id: 1,
+        name: "Alice in Wonderland",
+        // url: "https://ia904602.us.archive.org/29/items/alicesadventure_abridged_pc_librivox/alicesadventuresinwonderlandabridged_01_carroll_64kb.mp3",
+        url: "/audio/quote-1.mp3",
+        createdAt: new Date(),
+      },
+    ],
+    currentQuoteId: 1,
     addVoice: (newVoice: Blob) =>
       set((state) => ({
         voices: [
@@ -262,40 +281,43 @@ function VoiceCounter() {
 }
 
 const VoiceRecorder = () => {
-  const { addVoice } = useStore();
+  const { addVoice, quotes, currentQuoteId } = useStore();
   const [recording, setRecording] = useState<boolean>(false);
   const [quote, setQuote] = useState<string | undefined>(undefined);
 
-  const fetchQuote = async () => {
-    try {
-      const res = await fetch(
-        "https://ia904602.us.archive.org/29/items/alicesadventure_abridged_pc_librivox/alicesadventuresinwonderlandabridged_01_carroll_64kb.mp3"
-      );
+  const chosenQuote = quotes.find((q) => q.id == currentQuoteId);
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! Status: ${res.status}`);
-      }
+  // const fetchQuote = async () => {
+  //   try {
 
-      const blob = await res.blob();
-      const audioURL = URL.createObjectURL(blob);
+  //     if (chosenQuote) {
+  //       const res = await fetch(chosenQuote.url);
 
-      setQuote(audioURL); // Store URL if needed
-      // Play the audio or save it for later use
-      console.log("Audio loaded:", audioURL);
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! Status: ${res.status}`);
+  //       }
 
-      console.log(res);
-      console.log(blob);
-      // setQuote(blob);
-      alert(blob);
-    } catch (error) {
-      console.error("Error fetching quote:", error);
-    }
-  };
+  //       const blob = await res.blob();
+  //       const audioURL = URL.createObjectURL(blob);
 
-  console.log(quote);
+  //       setQuote(audioURL); // Store URL if needed
+  //       // Play the audio or save it for later use
+  //       console.log("Audio loaded:", audioURL);
+
+  //       console.log(res);
+  //       console.log(blob);
+  //       // setQuote(blob);
+  //       // alert(blob);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching quote:", error);
+  //   }
+  // };
+
+  // console.log(quote);
 
   useEffect(() => {
-    fetchQuote();
+    // fetchQuote();
   }, []);
   const startRecording = () => setRecording(true);
   const stopRecording = () => setRecording(false);
@@ -338,10 +360,12 @@ const VoiceRecorder = () => {
             of a book,” thought Alice “without pictures or conversations?”
           </blockquote>
 
-          <audio controls>
-            <source src={quote} type="audio/mpeg" />
-            Your browser does not support the audio tag.
-          </audio>
+          {chosenQuote && (
+            <audio controls>
+              <source src={chosenQuote.url} type="audio/mpeg" />
+              Your browser does not support the audio tag.
+            </audio>
+          )}
 
           <button
             className="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
