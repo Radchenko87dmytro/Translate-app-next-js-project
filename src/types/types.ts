@@ -15,6 +15,7 @@ export interface Voice {
   createdAt: Date;
   isAccepted: boolean;
 }
+
 export interface Quote {
   id: number;
   name: string;

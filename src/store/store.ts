@@ -32,7 +32,7 @@ export const useStore = create<VoiceStore>((set) => ({
 
   addVoice: (newVoice: Blob) =>
     set((state: VoiceStore) => ({
-      voices: [...state.voices, voice.init(state.voices.length + 1, newVoice)],
+      voices: [...state.voices, voice.init(state.voices.length + 1, state.currentQuoteId, newVoice)],
     })),
 
   toggleAcceptance: (id: number) =>

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useStore } from "@/store/store";
 import { Quote, VoiceStore } from "@/types/types";
 
@@ -14,10 +14,7 @@ const ReactMic = dynamic(
 );
 
 function VoiceCounter() {
-  const voices = useStore((state: VoiceStore) => state.voices);
-  const toggleAcceptance = useStore(
-    (state: VoiceStore) => state.toggleAcceptance
-  );
+  const { voices, toggleAcceptance, currentQuoteId } = useStore();
 
   return (
     <div>
@@ -26,61 +23,41 @@ function VoiceCounter() {
       </h1>
 
       <div className="flex flex-col gap-4">
-        {voices.map((v) => {
-          return (
-            <div
-              key={v.id}
-              className="flex flex-col md:flex-row items-center bg-white shadow p-4 rounded-lg"
-            >
-              <div className="flex-1 w-full">
-                <h3 className="text-md font-semibold mb-2">Playback #{v.id}</h3>
-                <audio
-                  controls
-                  src={URL.createObjectURL(v.blob)}
-                  className="w-full"
-                />
+        {voices
+          .filter((v) => v.quoteId == currentQuoteId)
+          .map((v) => {
+            return (
+              <div
+                key={v.id}
+                className="flex flex-col md:flex-row items-center bg-white shadow p-4 rounded-lg"
+              >
+                <div className="flex-1 w-full">
+                  <h3 className="text-md font-semibold mb-2">
+                    Playback #{v.id}
+                  </h3>
+                  <audio
+                    controls
+                    src={URL.createObjectURL(v.blob)}
+                    className="w-full"
+                  />
+                </div>
+                <div className="mt-4 md:mt-0 md:ml-4 w-full md:w-auto text-center">
+                  <button
+                    className={`w-full md:w-auto px-4 py-2 rounded ${
+                      v.isAccepted ? "bg-green-500" : "bg-red-500"
+                    } text-white`}
+                    onClick={() => toggleAcceptance(v.id)}
+                  >
+                    {v.isAccepted ? "Accepted" : "Not Accepted"}
+                  </button>
+                </div>
               </div>
-              <div className="mt-4 md:mt-0 md:ml-4 w-full md:w-auto text-center">
-                <button
-                  className={`w-full md:w-auto px-4 py-2 rounded ${
-                    v.isAccepted ? "bg-green-500" : "bg-red-500"
-                  } text-white`}
-                  onClick={() => toggleAcceptance(v.id)}
-                >
-                  {v.isAccepted ? "Accepted" : "Not Accepted"}
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
 }
-
-const ShowQuote = ({ currentQuote }: { currentQuote: Quote | undefined }) => {
-  {
-    console.log(currentQuote?.url);
-  }
-  return (
-    <>
-      {currentQuote ? (
-        <div className="flex-row sm:flex-row justify-center items-center gap-4 mt-4">
-          <h2 className="text-xl font-bold">{currentQuote.name}</h2>
-          <blockquote className="border-2 border-gray-500 rounded-lg m-2 p-2 max-w-full sm:max-w-2xl lg:max-w-4xl">
-            {currentQuote.text}
-            <audio controls>
-              <source src={currentQuote.url} type="audio/mp3" />
-              Your browser does not support the audio tag.
-            </audio>
-          </blockquote>
-        </div>
-      ) : (
-        <p>Loading quote...</p>
-      )}
-    </>
-  );
-};
 
 const VoiceRecorder = () => {
   const { addVoice, quotes, currentQuoteId, nextQuote, prevQuote } = useStore();
@@ -88,14 +65,31 @@ const VoiceRecorder = () => {
   const [currentQuote, setCurrentQuote] = useState<Quote | undefined>(
     undefined
   );
+  const [quoteUrl, setQuoteUrl] = useState<string>("");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setCurrentQuote(() => quotes.find((q) => q.id == currentQuoteId));
   }, [currentQuoteId, quotes]);
 
+  useEffect(() => {
+    if (audioRef.current && currentQuote) {
+      onQuoteChange(currentQuote.url);
+    }
+  }, [currentQuote]);
+
   const startRecording = () => setRecording(true);
   const stopRecording = () => setRecording(false);
   const onStop = (recordedBlob: { blob: Blob }) => addVoice(recordedBlob.blob);
+  const onQuoteChange = (newQuoteUrl: string) => {
+    setQuoteUrl(newQuoteUrl);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.load();
+      }
+    }, 0); // delay to ensure state is updated before DOM interaction
+  };
 
   return (
     <div className="w-full max-w-xl mx-auto mt-20 p-4 bg-slate-100 border rounded-lg shadow-lg text-center">
@@ -112,39 +106,64 @@ const VoiceRecorder = () => {
         backgroundColor="#E0E0E0"
       />
 
-      <ShowQuote currentQuote={currentQuote} />
+      {currentQuote ? (
+        <>
+          <div className="flex-row sm:flex-row justify-center items-center gap-4 mt-4">
+            <h2 className="text-xl font-bold">{currentQuote.name}</h2>
+            <blockquote className="border-2 border-gray-500 rounded-lg m-2 p-2 max-w-full sm:max-w-2xl lg:max-w-4xl">
+              {currentQuote.text}
+              <audio controls ref={audioRef}>
+                {audioRef ? (
+                  <source src={quoteUrl} type="audio/mpeg" />
+                ) : (
+                  <p>Loading audio...</p>
+                )}
+                Your browser does not support the audio element.
+              </audio>
+            </blockquote>
+          </div>
 
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-          onClick={prevQuote}
-          disabled={currentQuoteId === 1}
-        >
-          Previous Quote
-        </button>
+          <div className="flex justify-center gap-4 mt-4">
+            <button
+              className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              onClick={() => {
+                prevQuote();
+                onQuoteChange(currentQuote.url);
+              }}
+              disabled={currentQuoteId === 1}
+            >
+              Previous Quote
+            </button>
 
-        <button
-          className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-          onClick={nextQuote}
-          disabled={currentQuoteId === quotes.length}
-        >
-          Next Quote
-        </button>
-      </div>
-      <div>
-        <button
-          className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
-          onClick={startRecording}
-        >
-          Start Recording
-        </button>
-        <button
-          className="w-full sm:w-auto px-6 py-3 m-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
-          onClick={stopRecording}
-        >
-          Stop Recording
-        </button>
-      </div>
+            <button
+              className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              onClick={() => {
+                nextQuote();
+                onQuoteChange(currentQuote.url);
+              }}
+              disabled={currentQuoteId === quotes.length}
+            >
+              Next Quote
+            </button>
+          </div>
+          <div>
+            <button
+              className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
+              onClick={startRecording}
+            >
+              Start Recording
+            </button>
+            <button
+              className="w-full sm:w-auto px-6 py-3 m-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              onClick={stopRecording}
+            >
+              Stop Recording
+            </button>
+          </div>
+        </>
+      ) : (
+        <p>Loading quote...</p>
+      )}
     </div>
   );
 };
