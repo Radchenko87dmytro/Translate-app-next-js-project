@@ -10,6 +10,7 @@ export interface VoiceStore {
 
 export interface Voice {
   id: number;
+  quoteId: number;
   blob: Blob;
   createdAt: Date;
   isAccepted: boolean;

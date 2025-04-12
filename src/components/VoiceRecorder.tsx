@@ -15,7 +15,9 @@ const ReactMic = dynamic(
 
 function VoiceCounter() {
   const voices = useStore((state: VoiceStore) => state.voices);
-  const toggleAcceptance = useStore((state: VoiceStore) => state.toggleAcceptance);
+  const toggleAcceptance = useStore(
+    (state: VoiceStore) => state.toggleAcceptance
+  );
 
   return (
     <div>
@@ -57,6 +59,9 @@ function VoiceCounter() {
 }
 
 const ShowQuote = ({ currentQuote }: { currentQuote: Quote | undefined }) => {
+  {
+    console.log(currentQuote?.url);
+  }
   return (
     <>
       {currentQuote ? (
@@ -86,7 +91,7 @@ const VoiceRecorder = () => {
 
   useEffect(() => {
     setCurrentQuote(() => quotes.find((q) => q.id == currentQuoteId));
-  }, [currentQuoteId]);
+  }, [currentQuoteId, quotes]);
 
   const startRecording = () => setRecording(true);
   const stopRecording = () => setRecording(false);
@@ -111,7 +116,7 @@ const VoiceRecorder = () => {
 
       <div className="flex justify-center gap-4 mt-4">
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
           onClick={prevQuote}
           disabled={currentQuoteId === 1}
         >
@@ -119,26 +124,27 @@ const VoiceRecorder = () => {
         </button>
 
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
           onClick={nextQuote}
           disabled={currentQuoteId === quotes.length}
         >
           Next Quote
         </button>
       </div>
-
-      <button
-        className="w-full sm:w-auto px-6 py-3 mx-6 bg-green-500 text-white rounded hover:bg-green-600 transition"
-        onClick={startRecording}
-      >
-        Start Recording
-      </button>
-      <button
-        className="w-full sm:w-auto px-6 py-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
-        onClick={stopRecording}
-      >
-        Stop Recording
-      </button>
+      <div>
+        <button
+          className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
+          onClick={startRecording}
+        >
+          Start Recording
+        </button>
+        <button
+          className="w-full sm:w-auto px-6 py-3 m-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
+          onClick={stopRecording}
+        >
+          Stop Recording
+        </button>
+      </div>
     </div>
   );
 };

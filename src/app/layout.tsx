@@ -39,9 +39,9 @@ export default function RootLayout({
             {children}
 
             {/* Voice Recorder Section */}
-            <div className="flex justify-center items-center px-4 py-8 md:py-16">
-              <VoiceRecorder />
-            </div>
+            {/* <div className="flex justify-center items-center px-4 py-8 md:py-16"> */}
+            <VoiceRecorder />
+            {/* </div> */}
           </main>
 
           <Footer />
