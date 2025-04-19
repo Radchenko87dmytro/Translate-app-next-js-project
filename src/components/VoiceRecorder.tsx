@@ -3,7 +3,9 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState, useRef } from "react";
 import { useStore } from "@/store/store";
-import { Quote, VoiceStore } from "@/types/types";
+import { Quote } from "@/types/types";
+
+const baseBtn = "w-full sm:w-auto px-4 py-2 rounded transition text-white";
 
 // Dynamically import ReactMic (avoids SSR)
 const ReactMic = dynamic(
@@ -125,7 +127,7 @@ const VoiceRecorder = () => {
 
           <div className="flex justify-center gap-4 mt-4">
             <button
-              className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              className={`${baseBtn}bg-blue-500  rounded hover:bg-blue-600`}
               onClick={() => {
                 prevQuote();
                 onQuoteChange(currentQuote.url);
@@ -150,12 +152,14 @@ const VoiceRecorder = () => {
             <button
               className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
               onClick={startRecording}
+              disabled={recording}
             >
               Start Recording
             </button>
             <button
               className="w-full sm:w-auto px-6 py-3 m-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
               onClick={stopRecording}
+              disabled={!recording}
             >
               Stop Recording
             </button>
