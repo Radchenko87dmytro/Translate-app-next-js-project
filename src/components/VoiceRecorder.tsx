@@ -26,10 +26,11 @@ enum BtnType {
 
 // pure function
 const initBtnClasses = (btnType: BtnType): string => {
-  const baseBtn = "w-full sm:w-auto px-4 py-2 rounded transition text-white";
+  const baseBtn =
+    "w-full sm:w-auto px-6 py-3 m-3 rounded transition text-white";
   const blueBtn = "bg-blue-500 hover:bg-blue-600";
-  const greenBtn = "px-6 py-3 m-3 bg-green-500 hover:bg-green-600";
-  const redBtn = "px-6 py-3 m-3 bg-red-500 hover:bg-red-600";
+  const greenBtn = "bg-green-500 hover:bg-green-600";
+  const redBtn = "bg-red-500 hover:bg-red-600";
 
   let specificBtn = " ";
 
@@ -199,6 +200,7 @@ const VoiceRecorder = () => {
             </button>
           </div>
           <div>
+            <p className="text-2xl font-bold">Record plerase your sentence!</p>
             <button
               // className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
               className={initBtnClasses(BtnType.Green)}
