@@ -127,7 +127,7 @@ const VoiceRecorder = () => {
 
           <div className="flex justify-center gap-4 mt-4">
             <button
-              className={`${baseBtn}bg-blue-500  rounded hover:bg-blue-600`}
+              className={`${baseBtn} bg-blue-500  rounded hover:bg-blue-600`}
               onClick={() => {
                 prevQuote();
                 onQuoteChange(currentQuote.url);
