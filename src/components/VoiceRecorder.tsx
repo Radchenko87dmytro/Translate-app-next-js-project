@@ -5,7 +5,53 @@ import { useEffect, useState, useRef } from "react";
 import { useStore } from "@/store/store";
 import { Quote } from "@/types/types";
 
-const baseBtn = "w-full sm:w-auto px-4 py-2 rounded transition text-white";
+// enum Direction {
+//   Up,
+//   Down,
+//   Left,
+//   Right,
+// }
+
+// const DIRECTION = { UP: "UP", DOWN: "DOWN", left: 2, right: 3}
+
+// DIRECTION.UP
+
+// const baseBtn = "w-full sm:w-auto px-4 py-2 rounded transition text-white";
+
+enum BtnType {
+  Blue,
+  Green,
+  Red,
+}
+
+// pure function
+const initBtnClasses = (btnType: BtnType): string => {
+  const baseBtn = "w-full sm:w-auto px-4 py-2 rounded transition text-white";
+  const blueBtn = "bg-blue-500 hover:bg-blue-600";
+  const greenBtn = "px-6 py-3 m-3 bg-green-500 hover:bg-green-600";
+  const redBtn = "px-6 py-3 m-3 bg-red-500 hover:bg-red-600";
+
+  let specificBtn = " ";
+
+  switch (btnType) {
+    case BtnType.Blue:
+      specificBtn += blueBtn;
+      break;
+
+    case BtnType.Green:
+      specificBtn += greenBtn;
+      break;
+
+    case BtnType.Red:
+      specificBtn += redBtn;
+      break;
+  }
+
+  return baseBtn + specificBtn;
+};
+
+// prosty test jednostkowy dla funkcji
+// initBtnClasses(BtnType.Blue) == "w-full sm:w-auto px-4 py-2 rounded transition text-white bg-blue-500 hover:bg-blue-600" // true
 
 // Dynamically import ReactMic (avoids SSR)
 const ReactMic = dynamic(
@@ -127,7 +173,10 @@ const VoiceRecorder = () => {
 
           <div className="flex justify-center gap-4 mt-4">
             <button
-              className={`${baseBtn} bg-blue-500  rounded hover:bg-blue-600`}
+              // className={`${baseBtn} bg-blue-500 rounded hover:bg-blue-600`}
+              // className={baseBtn + " bg-blue-500 rounded hover:bg-blue-600"}
+              // className={initBtnClasses("bg-blue-500 rounded hover:bg-blue-600")}
+              className={initBtnClasses(BtnType.Blue)}
               onClick={() => {
                 prevQuote();
                 onQuoteChange(currentQuote.url);
@@ -138,7 +187,8 @@ const VoiceRecorder = () => {
             </button>
 
             <button
-              className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              // className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+              className={initBtnClasses(BtnType.Blue)}
               onClick={() => {
                 nextQuote();
                 onQuoteChange(currentQuote.url);
@@ -150,14 +200,16 @@ const VoiceRecorder = () => {
           </div>
           <div>
             <button
-              className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
+              // className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
+              className={initBtnClasses(BtnType.Green)}
               onClick={startRecording}
               disabled={recording}
             >
               Start Recording
             </button>
             <button
-              className="w-full sm:w-auto px-6 py-3 m-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              // className="w-full sm:w-auto px-6 py-3 m-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              className={initBtnClasses(BtnType.Red)}
               onClick={stopRecording}
               disabled={!recording}
             >
