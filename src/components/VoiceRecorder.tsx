@@ -27,7 +27,7 @@ enum BtnType {
 // pure function
 const initBtnClasses = (btnType: BtnType): string => {
   const baseBtn =
-    "w-full sm:w-auto px-6 py-3 m-3 rounded transition text-white";
+    "w-full sm:w-auto sx:px-2 xs:m-2 px-6 py-3 m-3 rounded transition text-white";
   const blueBtn = "bg-blue-500 hover:bg-blue-600";
   const greenBtn = "bg-green-500 hover:bg-green-600";
   const redBtn = "bg-red-500 hover:bg-red-600";
@@ -159,7 +159,7 @@ const VoiceRecorder = () => {
         <>
           <div className="flex-row sm:flex-row justify-center items-center gap-4 mt-4">
             <h2 className="text-xl font-bold">{currentQuote.name}</h2>
-            <blockquote className="border-2 border-gray-500 rounded-lg m-2 p-2 max-w-full sm:max-w-2xl lg:max-w-4xl">
+            <blockquote className="border-2 border-gray-500 rounded-lg m-2 p-2 max-w-full sm:max-w-2xl lg:max-w-4xl overflow-x-auto">
               {currentQuote.text}
               <audio controls ref={audioRef}>
                 {audioRef ? (
@@ -172,7 +172,7 @@ const VoiceRecorder = () => {
             </blockquote>
           </div>
 
-          <div className="flex justify-center gap-4 mt-4">
+          <div className="flex-col sm:flex-row justify-center gap-2 mt-4">
             <button
               // className={`${baseBtn} bg-blue-500 rounded hover:bg-blue-600`}
               // className={baseBtn + " bg-blue-500 rounded hover:bg-blue-600"}
@@ -199,8 +199,10 @@ const VoiceRecorder = () => {
               Next Quote
             </button>
           </div>
-          <div>
-            <p className="text-2xl font-bold">Record plerase your sentence!</p>
+          <p className="text-lg sm:text-2xl font-bold">
+            Record please your sentence!
+          </p>
+          <div className="flex-col sm:flex-row justify-center gap-2 mt-4">
             <button
               // className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
               className={initBtnClasses(BtnType.Green)}
