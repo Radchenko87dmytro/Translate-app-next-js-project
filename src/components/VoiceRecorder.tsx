@@ -199,9 +199,12 @@ const VoiceRecorder = () => {
               Next Quote
             </button>
           </div>
-          <p className="text-lg sm:text-2xl font-bold">
-            Record please your sentence!
-          </p>
+          {!recording && (
+            <p className="text-lg sm:text-2xl font-bold">
+              Record please your sentence!
+            </p>
+          )}
+
           <div className="flex-col sm:flex-row justify-center gap-2 mt-4">
             <button
               // className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
