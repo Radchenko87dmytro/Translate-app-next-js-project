@@ -32,7 +32,10 @@ export const useStore = create<VoiceStore>((set) => ({
 
   addVoice: (newVoice: Blob) =>
     set((state: VoiceStore) => ({
-      voices: [...state.voices, voice.init(state.voices.length + 1, state.currentQuoteId, newVoice)],
+      voices: [
+        ...state.voices,
+        voice.init(state.voices.length + 1, state.currentQuoteId, newVoice),
+      ],
     })),
 
   toggleAcceptance: (id: number) =>
@@ -40,6 +43,11 @@ export const useStore = create<VoiceStore>((set) => ({
       voices: state.voices.map((v) =>
         v.id === id ? { ...v, isAccepted: !v.isAccepted } : v
       ),
+    })),
+
+  deleteHandle: (id: number) =>
+    set((state: VoiceStore) => ({
+      voices: state.voices.filter((v) => v.id !== id),
     })),
 
   nextQuote: () =>

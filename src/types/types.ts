@@ -4,6 +4,7 @@ export interface VoiceStore {
   currentQuoteId: number;
   addVoice: (newVoice: Blob) => void;
   toggleAcceptance: (id: number) => void;
+  deleteHandle: (id: number) => void;
   nextQuote: () => void;
   prevQuote: () => void;
 }

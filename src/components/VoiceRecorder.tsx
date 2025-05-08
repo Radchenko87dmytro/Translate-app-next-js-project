@@ -5,6 +5,10 @@ import { useEffect, useState, useRef } from "react";
 import { useStore } from "@/store/store";
 import { Quote } from "@/types/types";
 
+import { Lora } from "next/font/google";
+
+const lora = Lora({ subsets: ["latin"], weight: ["400", "700"] });
+
 // enum Direction {
 //   Up,
 //   Down,
@@ -25,9 +29,14 @@ enum BtnType {
 }
 
 // pure function
-const initBtnClasses = (btnType: BtnType): string => {
+const initBtnClasses = (btnType: BtnType, disabled = false): string => {
   const baseBtn =
     "w-full sm:w-auto sx:px-2 xs:m-2 px-6 py-3 m-3 rounded transition text-white";
+
+  if (disabled) {
+    return baseBtn + " bg-gray-400 cursor-not-allowed";
+  }
+
   const blueBtn = "bg-blue-500 hover:bg-blue-600";
   const greenBtn = "bg-green-500 hover:bg-green-600";
   const redBtn = "bg-red-500 hover:bg-red-600";
@@ -63,12 +72,17 @@ const ReactMic = dynamic(
 );
 
 function VoiceCounter() {
-  const { voices, toggleAcceptance, currentQuoteId } = useStore();
+  const { voices, toggleAcceptance, deleteHandle, currentQuoteId } = useStore();
+
+  const voicesForCurrentQuote = voices.filter(
+    (v) => v.quoteId === currentQuoteId
+  );
 
   return (
     <div>
       <h1 className="text-center text-lg font-semibold mb-4">
-        {voices.length} Voice{voices.length !== 1 ? "s" : ""} Recorded
+        {voicesForCurrentQuote.length} Voice
+        {voicesForCurrentQuote.length !== 1 ? "s" : ""} Recorded
       </h1>
 
       <div className="flex flex-col gap-4">
@@ -99,6 +113,12 @@ function VoiceCounter() {
                   >
                     {v.isAccepted ? "Accepted" : "Not Accepted"}
                   </button>
+                  <button
+                    onClick={() => deleteHandle(v.id)}
+                    className="p-2 m-2 bg-red-400 hover:bg-red-600 rounded"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             );
@@ -116,6 +136,13 @@ const VoiceRecorder = () => {
   );
   const [quoteUrl, setQuoteUrl] = useState<string>("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const voicesForCurrentQuote = useStore().voices.filter(
+    (v) => v.quoteId === currentQuoteId
+  );
+  const isAtLeastOneAccepted = voicesForCurrentQuote.some((v) => v.isAccepted);
+  const isNextDisabled =
+    !isAtLeastOneAccepted || currentQuoteId === quotes.length;
 
   useEffect(() => {
     setCurrentQuote(() => quotes.find((q) => q.id == currentQuoteId));
@@ -141,13 +168,13 @@ const VoiceRecorder = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto mt-20 p-4 bg-slate-100 border rounded-lg shadow-lg text-center">
+    <div className="w-full max-w-xl mx-auto mt-20 p-4 border-2 border-gray-300  rounded-lg shadow-lg text-center">
       <h2 className="text-xl font-bold mb-4">Voice Recorder</h2>
 
       <VoiceCounter />
 
       <ReactMic
-        className="w-full m-2 p-2 rounded-lg bg-gray-200"
+        className="w-full rounded-lg bg-gray-200"
         record={recording}
         onStop={onStop}
         mimeType="audio/wav"
@@ -159,9 +186,11 @@ const VoiceRecorder = () => {
         <>
           <div className="flex-row sm:flex-row justify-center items-center gap-4 mt-4">
             <h2 className="text-xl font-bold">{currentQuote.name}</h2>
-            <blockquote className="border-2 border-gray-500 rounded-lg m-2 p-2 max-w-full sm:max-w-2xl lg:max-w-4xl overflow-x-auto">
+            <blockquote
+              className={`text-lg lg:text-xl italic leading-relaxed text-gray-800 border-2 border-gray-200 rounded-lg m-4 p-6 max-w-full sm:max-w-2xl lg:max-w-3xl overflow-x-auto bg-white shadow-sm ${lora.className}`}
+            >
               {currentQuote.text}
-              <audio controls ref={audioRef}>
+              <audio className="p-2 mt-4" controls ref={audioRef}>
                 {audioRef ? (
                   <source src={quoteUrl} type="audio/mpeg" />
                 ) : (
@@ -189,12 +218,12 @@ const VoiceRecorder = () => {
 
             <button
               // className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              className={initBtnClasses(BtnType.Blue)}
+              className={initBtnClasses(BtnType.Blue, isNextDisabled)}
               onClick={() => {
                 nextQuote();
-                onQuoteChange(currentQuote.url);
+                onQuoteChange(currentQuote?.url ?? "");
               }}
-              disabled={currentQuoteId === quotes.length}
+              disabled={isNextDisabled}
             >
               Next Quote
             </button>
