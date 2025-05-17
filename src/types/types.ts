@@ -1,4 +1,6 @@
 export interface VoiceStore {
+  tracks: Track[];
+  quoteGroups: QuoteGroup[];
   voices: Voice[];
   quotes: Quote[];
   currentQuoteId: number;
@@ -7,6 +9,19 @@ export interface VoiceStore {
   deleteHandle: (id: number) => void;
   nextQuote: () => void;
   prevQuote: () => void;
+
+  setCurrentQuoteId: (id: number) => void;
+}
+
+export interface Track {
+  id: number;
+  title: string;
+}
+
+export interface QuoteGroup {
+  id: number;
+  trackId: number;
+  title: string;
 }
 
 export interface Voice {
@@ -19,8 +34,17 @@ export interface Voice {
 
 export interface Quote {
   id: number;
+  quoteGroupId: number;
   name: string;
   text: string;
   url: string;
   createdAt: Date;
 }
+
+export type GroupedQuoteGroup = QuoteGroup & {
+  quotes: Quote[];
+};
+
+export type GroupedTrack = Track & {
+  groups: GroupedQuoteGroup[];
+};

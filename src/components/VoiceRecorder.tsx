@@ -186,8 +186,9 @@ const VoiceRecorder = () => {
         <>
           <div className="flex-row sm:flex-row justify-center items-center gap-4 mt-4">
             <h2 className="text-xl font-bold">{currentQuote.name}</h2>
+            {/*  leading-relaxed  text-gray-800*/}
             <blockquote
-              className={`text-lg lg:text-xl italic leading-relaxed text-gray-800 border-2 border-gray-200 rounded-lg m-4 p-6 max-w-full sm:max-w-2xl lg:max-w-3xl overflow-x-auto bg-white shadow-sm ${lora.className}`}
+              className={`text-lg lg:text-xl tracking-[-0.003em] leading-[32px]  italic text-[#242424]  border-2 border-gray-200 rounded-lg m-4 p-6 max-w-full sm:max-w-2xl lg:max-w-3xl overflow-x-auto bg-white shadow-sm ${lora.className}`}
             >
               {currentQuote.text}
               <audio className="p-2 mt-4" controls ref={audioRef}>
