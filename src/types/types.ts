@@ -11,6 +11,8 @@ export interface VoiceStore {
   prevQuote: () => void;
 
   setCurrentQuoteId: (id: number) => void;
+
+  isNextDisabled: () => boolean | undefined;
 }
 
 export interface Track {

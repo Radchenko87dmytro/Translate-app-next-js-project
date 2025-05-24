@@ -129,7 +129,15 @@ function VoiceCounter() {
 }
 
 const VoiceRecorder = () => {
-  const { addVoice, quotes, currentQuoteId, nextQuote, prevQuote } = useStore();
+  const {
+    addVoice,
+    quotes,
+    currentQuoteId,
+    quoteGroups,
+    nextQuote,
+    prevQuote,
+    isNextDisabled,
+  } = useStore();
   const [recording, setRecording] = useState<boolean>(false);
   const [currentQuote, setCurrentQuote] = useState<Quote | undefined>(
     undefined
@@ -137,12 +145,12 @@ const VoiceRecorder = () => {
   const [quoteUrl, setQuoteUrl] = useState<string>("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const voicesForCurrentQuote = useStore().voices.filter(
-    (v) => v.quoteId === currentQuoteId
-  );
-  const isAtLeastOneAccepted = voicesForCurrentQuote.some((v) => v.isAccepted);
-  const isNextDisabled =
-    !isAtLeastOneAccepted || currentQuoteId === quotes.length;
+  // const voicesForCurrentQuote = useStore().voices.filter(
+  //   (v) => v.quoteId === currentQuoteId
+  // );
+  // const isAtLeastOneAccepted = voicesForCurrentQuote.some((v) => v.isAccepted);
+  // const isNextDisabled =
+  //   !isAtLeastOneAccepted || currentQuoteId === quotes.length;
 
   useEffect(() => {
     setCurrentQuote(() => quotes.find((q) => q.id == currentQuoteId));
@@ -168,7 +176,7 @@ const VoiceRecorder = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto mt-20 p-4 border-2 border-gray-300  rounded-lg shadow-lg text-center">
+    <div className="w-full max-w-xl mx-auto  p-4 border-2 border-gray-300  rounded-lg shadow-lg text-center">
       <h2 className="text-xl font-bold mb-4">Voice Recorder</h2>
 
       <VoiceCounter />
@@ -185,7 +193,10 @@ const VoiceRecorder = () => {
       {currentQuote ? (
         <>
           <div className="flex-row sm:flex-row justify-center items-center gap-4 mt-4">
-            <h2 className="text-xl font-bold">{currentQuote.name}</h2>
+            <h2 className="text-xl font-bold">
+              {currentQuote.name}
+              {}
+            </h2>
             {/*  leading-relaxed  text-gray-800*/}
             <blockquote
               className={`text-lg lg:text-xl tracking-[-0.003em] leading-[32px]  italic text-[#242424]  border-2 border-gray-200 rounded-lg m-4 p-6 max-w-full sm:max-w-2xl lg:max-w-3xl overflow-x-auto bg-white shadow-sm ${lora.className}`}
@@ -219,12 +230,12 @@ const VoiceRecorder = () => {
 
             <button
               // className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              className={initBtnClasses(BtnType.Blue, isNextDisabled)}
+              className={initBtnClasses(BtnType.Blue, isNextDisabled())}
               onClick={() => {
                 nextQuote();
                 onQuoteChange(currentQuote?.url ?? "");
               }}
-              disabled={isNextDisabled}
+              disabled={isNextDisabled()}
             >
               Next Quote
             </button>
