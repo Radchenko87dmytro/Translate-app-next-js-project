@@ -10,11 +10,11 @@ export const useStore = create<VoiceStore>((set, get) => ({
     },
     {
       id: 2,
-      title: "Alice in Wanderland",
+      title: "Another book 1",
     },
     {
       id: 3,
-      title: "Alice in Wanderland",
+      title: "Another book 2",
     },
   ],
   quoteGroups: [
@@ -25,12 +25,12 @@ export const useStore = create<VoiceStore>((set, get) => ({
     },
     {
       id: 2,
-      trackId: 2,
+      trackId: 1,
       title: "Chapter two",
     },
     {
       id: 3,
-      trackId: 3,
+      trackId: 1,
       title: "Chapter thre",
     },
   ],
@@ -46,7 +46,7 @@ export const useStore = create<VoiceStore>((set, get) => ({
     },
     {
       id: 2,
-      quoteGroupId: 2,
+      quoteGroupId: 1,
       name: "Alice in Wonderland",
       text: "and of having nothing to do: once or twice she had peeped into the book her sister was reading,",
       url: "/audio/quote-2.mp3",
@@ -54,10 +54,35 @@ export const useStore = create<VoiceStore>((set, get) => ({
     },
     {
       id: 3,
-      quoteGroupId: 3,
+      quoteGroupId: 1,
       name: "Alice in Wonderland",
       text: "but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?”",
       url: "/audio/quote-3.mp3",
+      createdAt: new Date(),
+    },
+
+    {
+      id: 4,
+      quoteGroupId: 2,
+      name: "Alice in Wonderland",
+      text: "“Curiouser and curiouser!” cried Alice (she was so much surprised, that for the moment she quite forgot how to speak good English)",
+      url: "/audio/quote-4.mp3",
+      createdAt: new Date(),
+    },
+    {
+      id: 5,
+      quoteGroupId: 2,
+      name: "Alice in Wonderland",
+      text: "“now I’m opening out like the largest telescope that ever was! Good-bye, feet!”",
+      url: "/audio/quote-5.mp3",
+      createdAt: new Date(),
+    },
+    {
+      id: 6,
+      quoteGroupId: 2,
+      name: "Alice in Wonderland",
+      text: "Oh, my poor little feet, I wonder who will put on your shoes and stockings for you now, dears?",
+      url: "/audio/quote-6.mp3",
       createdAt: new Date(),
     },
   ],
