@@ -133,7 +133,7 @@ const VoiceRecorder = () => {
     addVoice,
     quotes,
     currentQuoteId,
-    quoteGroups,
+    // quoteGroups,
     nextQuote,
     prevQuote,
     isNextDisabled,

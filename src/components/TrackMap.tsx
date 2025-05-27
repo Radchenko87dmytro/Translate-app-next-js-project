@@ -24,7 +24,7 @@ const TrackMap = () => {
     tracks,
     currentQuoteId,
     setCurrentQuoteId,
-    isNextDisabled,
+    // isNextDisabled,
   } = useStore();
 
   const data = groupQuotesByTrack(quotes, quoteGroups, tracks);
