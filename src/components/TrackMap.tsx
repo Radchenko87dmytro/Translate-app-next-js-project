@@ -37,10 +37,13 @@ const TrackMap = () => {
             <h2 className="text-2xl font-bold m-10 ">{track.title}</h2>
             <div
               key={track.id}
-              className="mb-8 flex flex-row mr-16 bg-slate-200 rounded-3xl p-6"
+              className="mb-8 flex mr-16 flex-col sm:flex-row"
             >
               {track.groups.map((group) => (
-                <div key={group.id} className="mb-4 mr-16">
+                <div
+                  key={group.id}
+                  className="mb-4 mr-16 bg-slate-200 rounded-3xl p-6 "
+                >
                   <h3 className="text-lg font-semibold mb-8 ">{group.title}</h3>
                   <div className="flex gap-5 flex-row">
                     {group.quotes.map((quote) => {
