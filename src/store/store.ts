@@ -56,7 +56,7 @@ export const useStore = create<VoiceStore>((set, get) => ({
       quoteGroupId: 1,
       name: "Alice in Wonderland",
       text: "Alice was beginning to get very tired of sitting by her sister on the bank,",
-      url: "/audio/alice_in_wonderland/chapter_one/quote-1.mp3",
+      url: "/audio/alice_in_wonderland/1/1.mp3",
       createdAt: new Date(),
       quoteNumber: null,
     },
