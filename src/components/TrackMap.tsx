@@ -13,7 +13,27 @@ const groupQuotesByTrack = (
         const quotesInGroup = quotes.filter((q) => q.quoteGroupId === group.id);
         return { ...group, quotes: quotesInGroup };
       });
-    return { ...track, groups };
+
+    // Flatten all quotes in this track's groups to assign local numbers
+    const allQuotesInTrack = groups.flatMap((group) => group.quotes);
+
+    // Assign local quoteNumber
+    let counter = 1;
+    const numberedQuotesMap = new Map<number, number>(); // quoteId -> number
+    allQuotesInTrack.forEach((quote) => {
+      numberedQuotesMap.set(quote.id, counter++);
+    });
+
+    // Inject quoteNumber back into group.quotes
+    const updatedGroups = groups.map((group) => ({
+      ...group,
+      quotes: group.quotes.map((q) => ({
+        ...q,
+        quoteNumber: numberedQuotesMap.get(q.id),
+      })),
+    }));
+
+    return { ...track, groups: updatedGroups };
   });
 };
 
@@ -30,48 +50,40 @@ const TrackMap = () => {
   const data = groupQuotesByTrack(quotes, quoteGroups, tracks);
 
   return (
-    <div className="p-4  flex flex-col">
-      <div className="flex flex-col ">
-        {data.map((track) => (
-          <>
-            <h2 className="text-2xl font-bold m-10 ">{track.title}</h2>
-            <div
-              key={track.id}
-              className="mb-8 flex mr-16 flex-col sm:flex-row"
-            >
-              {track.groups.map((group) => (
-                <div
-                  key={group.id}
-                  className="mb-4 mr-16 bg-slate-200 rounded-3xl p-6 "
-                >
-                  <h3 className="text-lg font-semibold mb-8 ">{group.title}</h3>
-                  <div className="flex gap-5 flex-row">
-                    {group.quotes.map((quote) => {
-                      const isActive = quote.id === currentQuoteId;
-                      return (
-                        <button
-                          key={quote.id}
-                          // disabled={isNextDisabled()}
-                          className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold shadow ${
-                            isActive
-                              ? "bg-green-600"
-                              : // : isNextDisabled()
-                                // ? "bg-gray-400 cursor-not-allowed"
-                                "bg-blue-400 hover:bg-blue-500"
-                          }`}
-                          onClick={() => setCurrentQuoteId(quote.id)}
-                        >
-                          {quote.id}
-                        </button>
-                      );
-                    })}
-                  </div>
+    <div className="flex flex-col justify-center items-center ">
+      {data.map((track) => (
+        <>
+          <h2 className="text-2xl font-bold m-10 ">{track.title}</h2>
+          <div key={track.id} className="mb-8 flex flex-col sm:flex-row">
+            {track.groups.map((group) => (
+              <div
+                key={group.id}
+                className="mb-4 m-2 bg-slate-200 rounded-3xl p-6 "
+              >
+                <h3 className="text-lg font-semibold mb-8 ">{group.title}</h3>
+                <div className="flex gap-5 flex-row">
+                  {group.quotes.map((quote) => {
+                    const isActive = quote.id === currentQuoteId;
+                    return (
+                      <button
+                        key={quote.id}
+                        className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold shadow ${
+                          isActive
+                            ? "bg-green-600"
+                            : "bg-blue-400 hover:bg-blue-500"
+                        }`}
+                        onClick={() => setCurrentQuoteId(quote.id)}
+                      >
+                        {quote.quoteNumber}
+                      </button>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </>
-        ))}
-      </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ))}
     </div>
   );
 };
