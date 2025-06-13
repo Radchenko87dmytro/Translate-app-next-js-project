@@ -213,11 +213,8 @@ const VoiceRecorder = () => {
             </blockquote>
           </div>
 
-          <div className="flex-col sm:flex-row justify-center gap-2 mt-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-4">
             <button
-              // className={`${baseBtn} bg-blue-500 rounded hover:bg-blue-600`}
-              // className={baseBtn + " bg-blue-500 rounded hover:bg-blue-600"}
-              // className={initBtnClasses("bg-blue-500 rounded hover:bg-blue-600")}
               className={initBtnClasses(BtnType.Blue)}
               onClick={() => {
                 prevQuote();
@@ -229,7 +226,6 @@ const VoiceRecorder = () => {
             </button>
 
             <button
-              // className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
               className={initBtnClasses(BtnType.Blue, isNextDisabled())}
               onClick={() => {
                 nextQuote();
@@ -246,9 +242,8 @@ const VoiceRecorder = () => {
             </p>
           )}
 
-          <div className="flex-col sm:flex-row justify-center gap-2 mt-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-4">
             <button
-              // className="w-full sm:w-auto px-6 py-3 m-3 bg-green-500 text-white rounded hover:bg-green-600 transition"
               className={initBtnClasses(BtnType.Green)}
               onClick={startRecording}
               disabled={recording}
@@ -256,7 +251,6 @@ const VoiceRecorder = () => {
               Start Recording
             </button>
             <button
-              // className="w-full sm:w-auto px-6 py-3 m-3 bg-red-500 text-white rounded hover:bg-red-600 transition"
               className={initBtnClasses(BtnType.Red)}
               onClick={stopRecording}
               disabled={!recording}
@@ -274,4 +268,4 @@ const VoiceRecorder = () => {
 
 export default VoiceRecorder;
 
-// git add . && git commit -m "refactored audio folder" && git push
+// git add . && git commit -m "added onboarding" && git push

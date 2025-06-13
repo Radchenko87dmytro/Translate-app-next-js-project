@@ -52,7 +52,7 @@ const TrackMap = () => {
   return (
     <div className="flex flex-col justify-center items-center ">
       {data.map((track) => (
-        <>
+        <div key={track.id}>
           <h2 className="text-2xl font-bold m-10 ">{track.title}</h2>
           <div key={track.id} className="mb-8 flex flex-col sm:flex-row">
             {track.groups.map((group) => (
@@ -82,7 +82,7 @@ const TrackMap = () => {
               </div>
             ))}
           </div>
-        </>
+        </div>
       ))}
     </div>
   );
