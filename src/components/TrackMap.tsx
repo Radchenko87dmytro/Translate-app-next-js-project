@@ -1,5 +1,7 @@
 import { useStore } from "@/store/store";
 import { Quote, QuoteGroup, Track, GroupedTrack } from "@/types/types";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const groupQuotesByTrack = (
   quotes: Quote[],
@@ -38,30 +40,59 @@ const groupQuotesByTrack = (
 };
 
 const TrackMap = () => {
-  const {
-    quotes,
-    quoteGroups,
-    tracks,
-    currentQuoteId,
-    setCurrentQuoteId,
-    // isNextDisabled,
-  } = useStore();
+  const { quotes, quoteGroups, tracks, currentQuoteId, setCurrentQuoteId } =
+    useStore();
 
   const data = groupQuotesByTrack(quotes, quoteGroups, tracks);
 
   return (
-    <div className="flex flex-col justify-center items-center ">
+    <div className="w-full max-w-xl mx-auto p-4 border-2 border-gray-300 rounded-lg shadow-lg text-center">
       {data.map((track) => (
         <div key={track.id}>
           <h2 className="text-2xl font-bold m-10 ">{track.title}</h2>
-          <div key={track.id} className="mb-8 flex flex-col sm:flex-row">
+
+          <div className="flex justify-center items-center gap-4 mb-8">
+            <button className="p-2 rounded-full hover:bg-blue-400  disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+              <FontAwesomeIcon
+                icon={faArrowLeft}
+                onClick={() => {
+                  const allQuotes = data.flatMap((t) =>
+                    t.groups.flatMap((g) => g.quotes)
+                  );
+                  const currentIndex = allQuotes.findIndex(
+                    (q) => q.id === currentQuoteId
+                  );
+                  if (currentIndex > 0)
+                    setCurrentQuoteId(allQuotes[currentIndex - 1].id);
+                }}
+              />
+            </button>
+
+            <button className="p-2 rounded-full hover:bg-blue-400  disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                onClick={() => {
+                  const allQuotes = data.flatMap((t) =>
+                    t.groups.flatMap((g) => g.quotes)
+                  );
+                  const currentIndex = allQuotes.findIndex(
+                    (q) => q.id === currentQuoteId
+                  );
+                  if (currentIndex < allQuotes.length - 1)
+                    setCurrentQuoteId(allQuotes[currentIndex + 1].id);
+                }}
+              />
+            </button>
+          </div>
+
+          <div key={track.id} className="mb-8 flex-wrap flex-col sm:flex-row">
             {track.groups.map((group) => (
               <div
                 key={group.id}
                 className="mb-4 m-2 bg-slate-200 rounded-3xl p-6 "
               >
                 <h3 className="text-lg font-semibold mb-8 ">{group.title}</h3>
-                <div className="flex gap-5 flex-row">
+                <div className="flex justify-center gap-16 flex-row">
                   {group.quotes.map((quote) => {
                     const isActive = quote.id === currentQuoteId;
                     return (
