@@ -65,7 +65,7 @@ const initBtnClasses = (btnType: BtnType, disabled = false): string => {
 
 // Dynamically import ReactMic (avoids SSR)
 const ReactMic = dynamic(
-  () => import("react-mic").then((mod) => mod.ReactMic),
+  () => import("react-audio-voice-recorder").then((mod) => mod.AudioRecorder),
   {
     ssr: false,
   }
@@ -182,7 +182,7 @@ const VoiceRecorder = () => {
       <VoiceCounter />
 
       <ReactMic
-        className="w-full rounded-lg bg-gray-200"
+        // classes="w-full rounded-lg bg-gray-200"
         record={recording}
         onStop={onStop}
         mimeType="audio/wav"
@@ -268,4 +268,4 @@ const VoiceRecorder = () => {
 
 export default VoiceRecorder;
 
-// git add . && git commit -m "fixed width of TrackMap" && git push
+// git add . && git commit -m "error dynamic VoiceRecorder.tsx" && git push
