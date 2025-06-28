@@ -1,10 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useState, useRef } from "react";
 import { useStore } from "@/store/store";
 import { Quote } from "@/types/types";
-
+import { useReactMediaRecorder } from "react-media-recorder";
 import { Lora } from "next/font/google";
 
 const lora = Lora({ subsets: ["latin"], weight: ["400", "700"] });
@@ -63,14 +62,6 @@ const initBtnClasses = (btnType: BtnType, disabled = false): string => {
 // prosty test jednostkowy dla funkcji
 // initBtnClasses(BtnType.Blue) == "w-full sm:w-auto px-4 py-2 rounded transition text-white bg-blue-500 hover:bg-blue-600" // true
 
-// Dynamically import ReactMic (avoids SSR)
-const ReactMic = dynamic(
-  () => import("react-audio-voice-recorder").then((mod) => mod.AudioRecorder),
-  {
-    ssr: false,
-  }
-);
-
 function VoiceCounter() {
   const { voices, toggleAcceptance, deleteHandle, currentQuoteId } = useStore();
 
@@ -128,6 +119,20 @@ function VoiceCounter() {
   );
 }
 
+const RecordView = () => {
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({ video: false });
+
+  return (
+    <div>
+      <p>{status}</p>
+      <button onClick={startRecording}>Start Recording</button>
+      <button onClick={stopRecording}>Stop Recording</button>
+      <video src={mediaBlobUrl} controls autoPlay loop />
+    </div>
+  );
+};
+
 const VoiceRecorder = () => {
   const {
     addVoice,
@@ -164,7 +169,8 @@ const VoiceRecorder = () => {
 
   const startRecording = () => setRecording(true);
   const stopRecording = () => setRecording(false);
-  const onStop = (recordedBlob: { blob: Blob }) => addVoice(recordedBlob.blob);
+  // const onStop = (recordedBlob: { blob: Blob }) => addVoice(recordedBlob.blob);
+  const onStop = (blob: Blob) => addVoice(blob);
   const onQuoteChange = (newQuoteUrl: string) => {
     setQuoteUrl(newQuoteUrl);
     setTimeout(() => {
@@ -179,16 +185,17 @@ const VoiceRecorder = () => {
     <div className="w-full max-w-xl mx-auto  p-4 border-2 border-gray-300  rounded-lg shadow-lg text-center">
       <h2 className="text-xl font-bold mb-4">Voice Recorder</h2>
 
+      <RecordView />
+
       <VoiceCounter />
 
-      <ReactMic
+      {/* record={recording}
+      onStop={onStop}
+      mimeType="audio/wav"
+      strokeColor="#FF0000"
+      backgroundColor="#E0E0E0" 
         // classes="w-full rounded-lg bg-gray-200"
-        record={recording}
-        onStop={onStop}
-        mimeType="audio/wav"
-        strokeColor="#FF0000"
-        backgroundColor="#E0E0E0"
-      />
+      */}
 
       {currentQuote ? (
         <>
