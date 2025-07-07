@@ -124,11 +124,31 @@ const RecordView = () => {
     useReactMediaRecorder({ video: false });
 
   return (
-    <div>
-      <p>{status}</p>
-      <button onClick={startRecording}>Start Recording</button>
-      <button onClick={stopRecording}>Stop Recording</button>
-      <video src={mediaBlobUrl} controls autoPlay loop />
+    <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-md text-center space-y-4">
+      <p className="text-lg font-semibold text-gray-700">{status}</p>
+
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={startRecording}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          Start Recording
+        </button>
+        <button
+          onClick={stopRecording}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+        >
+          Stop Recording
+        </button>
+      </div>
+
+      <video
+        src={mediaBlobUrl}
+        controls
+        autoPlay
+        loop
+        className="w-full rounded-lg border border-gray-300"
+      />
     </div>
   );
 };
@@ -275,4 +295,4 @@ const VoiceRecorder = () => {
 
 export default VoiceRecorder;
 
-// git add . && git commit -m "error dynamic VoiceRecorder.tsx" && git push
+// git add . && git commit -m "Button styles VoiceRecorder.tsx" && git push
