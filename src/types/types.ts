@@ -41,7 +41,7 @@ export interface Quote {
   text: string;
   url: string;
   createdAt: Date;
-  quoteNumber: null | number;
+  quoteNumber: null | number | undefined;
 }
 
 export type GroupedQuoteGroup = QuoteGroup & {
